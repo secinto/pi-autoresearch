@@ -735,15 +735,11 @@ export default function autoresearchExtension(pi: ExtensionAPI) {
 
     const mdPath = path.join(ctx.cwd, "autoresearch.md");
 
-    const limitInfo = state.maxExperiments !== null
-      ? `\nMax experiments: ${state.maxExperiments}. STOP the loop when log_experiment tells you the limit is reached.`
-      : "\nNEVER STOP until interrupted.";
-
     return {
       systemPrompt: event.systemPrompt +
         "\n\n## Autoresearch Mode (ACTIVE)" +
         "\nYou are in autoresearch mode. Optimize the primary metric through an autonomous experiment loop." +
-        "\nUse init_experiment, run_experiment, and log_experiment tools." + limitInfo +
+        "\nUse init_experiment, run_experiment, and log_experiment tools. NEVER STOP until interrupted." +
         `\nExperiment rules: ${mdPath} — read this file at the start of every session and after compaction.`,
     };
   });
@@ -763,7 +759,6 @@ export default function autoresearchExtension(pi: ExtensionAPI) {
       "Call init_experiment exactly once at the start of an autoresearch session, before the first run_experiment.",
       "If autoresearch.jsonl already exists with a config, do NOT call init_experiment again.",
       "If the optimization target changes (different benchmark, metric, or workload), call init_experiment again to insert a new config header and reset the baseline.",
-      "Set max_experiments to limit the number of experiments. When the limit is reached, the loop auto-stops.",
     ],
     parameters: InitParams,
 
